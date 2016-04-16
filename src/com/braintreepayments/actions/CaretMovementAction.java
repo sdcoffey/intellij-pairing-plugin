@@ -21,7 +21,9 @@ public class CaretMovementAction extends EditorAction {
 
     @Override
     public void deserializeInternal(String serizliation) {
-
+        String[] parts = serizliation.split(",");
+        mLineShift = Integer.valueOf(parts[0]);
+        mColumnShift = Integer.valueOf(parts[1]);
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.braintreepayments.eventhandlers;
 
+import com.braintreepayments.actions.EditorAction;
+import com.braintreepayments.actions.KeyInputAction;
+import com.braintreepayments.service.WebsocketService;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
@@ -7,13 +10,17 @@ import org.jetbrains.annotations.NotNull;
 
 public class KeyInputListener implements TypedActionHandler {
 
+    private WebsocketService mSerivce;
+
+    public KeyInputListener(WebsocketService service) {
+        mSerivce = service;
+    }
 
     @Override
     public void execute(@NotNull Editor editor, char charTyped, @NotNull DataContext dataContext) {
         int currentOffset = editor.getCaretModel().getCurrentCaret().getOffset();
-        editor.getDocument().insertString(currentOffset, Character.toString(charTyped));
-        editor.getCaretModel().moveToOffset(currentOffset + 1);
-
-        System.out.println(charTyped);
+        EditorAction action = new KeyInputAction(currentOffset, Character.toString(charTyped));
+        mSerivce.sendAction(action);
+        action.run(editor);
     }
 }
