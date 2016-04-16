@@ -31,19 +31,23 @@ public abstract class EditorAction {
      * Returns a new {@link EditorAction} based on the serialized string
      *
      * @param serialization Serialized wire format of this action
-     * @return
      */
-    public EditorAction deserialize(String serialization) {
+    public static EditorAction deserialize(String serialization) {
         if (TextUtils.isEmpty(serialization)) {
             return null;
         }
 
-        String data = serialization.substring(2, serialization.length()-1);
+        String data = serialization.substring(1, serialization.length());
+        System.out.println(data);
         char actionKey = serialization.charAt(0);
         EditorAction action = null;
         switch (actionKey) {
             case 'm':
                 action = new CaretMovementAction();
+                action.deserializeInternal(data);
+                break;
+            case 'i':
+                action = new KeyInputAction();
                 action.deserializeInternal(data);
                 break;
         }

@@ -1,6 +1,10 @@
 package com.braintreepayments.service;
 
 import com.braintreepayments.actions.EditorAction;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.project.Project;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -10,15 +14,14 @@ public class WebsocketService extends WebSocketClient {
 
     public static final String BASE_URL = "ws://localhost:4000";
 
-    private static WebsocketService sWebSocketService;
     private String mSessionId;
+    private Project mProject;
 
-    public static WebsocketService connect(String sessionId) {
-        if (sWebSocketService == null) {
-            URI uri = URI.create(String.format("%s/%s", BASE_URL, sessionId));
-            sWebSocketService = new WebsocketService(uri);
-        }
-        return sWebSocketService;
+    public WebsocketService(String sessionId, Project project) {
+        super(URI.create(String.format("%s/%s", BASE_URL, sessionId)));
+        mSessionId = sessionId;
+        mProject = project;
+        connect();
     }
 
     protected WebsocketService(URI serverURI) {
@@ -35,8 +38,18 @@ public class WebsocketService extends WebSocketClient {
     }
 
     @Override
-    public void onMessage(String s) {
-        // todo: deserialize event, add to event queue
+    public void onMessage(final String message) {
+        System.out.println(message);
+        WriteCommandAction.runWriteCommandAction(mProject, new Runnable() {
+            @Override
+            public void run() {
+                EditorAction action = EditorAction.deserialize(message);
+                Editor currentEditor = FileEditorManager.getInstance(mProject).getSelectedTextEditor();
+                if (action != null) {
+                    action.run(currentEditor);
+                }
+            }
+        });
     }
 
     @Override
@@ -45,5 +58,6 @@ public class WebsocketService extends WebSocketClient {
 
     @Override
     public void onError(Exception e) {
+        e.printStackTrace();
     }
 }

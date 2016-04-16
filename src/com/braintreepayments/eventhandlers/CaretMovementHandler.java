@@ -6,6 +6,7 @@ import com.braintreepayments.service.WebsocketService;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,20 +29,21 @@ public class CaretMovementHandler extends EditorActionHandler {
     protected void doExecute(Editor editor, @Nullable Caret caret, DataContext dataContext) {
         super.doExecute(editor, caret, dataContext);
 
-        int lineShift = 0;
-        int columnShift = 0;
+        LogicalPosition currentPosition = editor.getCaretModel().getLogicalPosition();
+        int newLine = currentPosition.line;
+        int newColumn = currentPosition.column;
 
         if (mType == 0) {
-            lineShift = 1;
+            newLine++;
         } else if ((mType & TYPE_CARET_UP) > 0) {
-            lineShift = -1;
+            newLine = Math.max(newLine-1, 0);
         } else if ((mType & TYPE_CARET_LEFT) > 0) {
-            columnShift = -1;
+            newColumn = Math.max(newColumn-1, 0);
         } else if ((mType  & TYPE_CARET_RIGHT) > 0) {
-            columnShift = 1;
+            newColumn++;
         }
 
-        EditorAction action = new CaretMovementAction(lineShift, columnShift);
+        EditorAction action = new CaretMovementAction(newLine, newColumn);
         mWebsocketService.sendAction(action);
         action.run(editor);
     }

@@ -19,8 +19,7 @@ public class NewSessionAction extends AnAction {
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
         EditorActionManager manager = EditorActionManager.getInstance();
-        WebsocketService service = WebsocketService.connect("testSession");
-        service.connect();
+        WebsocketService service = new WebsocketService("testSession", anActionEvent.getProject());
 
         mKeyInputListener = new KeyInputListener(service);
         manager.setActionHandler(IdeActions.ACTION_EDITOR_MOVE_CARET_DOWN, new CaretMovementHandler(CaretMovementHandler.TYPE_CARET_DOWN, service));

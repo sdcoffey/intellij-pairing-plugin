@@ -12,9 +12,11 @@ public class KeyInputAction extends  EditorAction {
         mInput = input;
     }
 
+    protected KeyInputAction() {}
+
     @Override
     public String serialize() {
-        return String.format("a%d,%s", mOffset, mInput);
+        return String.format("i%d,%s", mOffset, mInput);
     }
 
     @Override
@@ -26,6 +28,7 @@ public class KeyInputAction extends  EditorAction {
 
     @Override
     public void run(Editor editor) {
+        mOffset = Math.min(mOffset, editor.getDocument().getTextLength());
         editor.getDocument().insertString(mOffset, mInput);
         editor.getCaretModel().moveToOffset(mOffset + mInput.length());
     }
