@@ -3,6 +3,7 @@ package com.braintreepayments.eventhandlers;
 import com.braintreepayments.actions.CaretMovementAction;
 import com.braintreepayments.actions.EditorAction;
 import com.braintreepayments.service.WebsocketService;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
@@ -29,6 +30,9 @@ public class CaretMovementHandler extends EditorActionHandler {
     protected void doExecute(Editor editor, @Nullable Caret caret, DataContext dataContext) {
         super.doExecute(editor, caret, dataContext);
 
+        caret = (Caret) dataContext.getData(CommonDataKeys.CARET.getName());
+        System.out.println(caret.getLogicalPosition());
+
         LogicalPosition currentPosition = editor.getCaretModel().getLogicalPosition();
         int newLine = currentPosition.line;
         int newColumn = currentPosition.column;
@@ -44,7 +48,9 @@ public class CaretMovementHandler extends EditorActionHandler {
         }
 
         EditorAction action = new CaretMovementAction(newLine, newColumn);
-        mWebsocketService.sendAction(action);
+        if (mWebsocketService.isOpen()) {
+            mWebsocketService.sendAction(action);
+        }
         action.run(editor);
     }
 }

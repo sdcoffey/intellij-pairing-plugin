@@ -2,6 +2,7 @@ package com.braintreepayments.actions;
 
 import com.braintreepayments.eventhandlers.CaretMovementHandler;
 import com.braintreepayments.eventhandlers.KeyInputListener;
+import com.braintreepayments.eventhandlers.TextDeleteHandler;
 import com.braintreepayments.service.WebsocketService;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -26,6 +27,8 @@ public class NewSessionAction extends AnAction {
         manager.setActionHandler(IdeActions.ACTION_EDITOR_MOVE_CARET_LEFT, new CaretMovementHandler(CaretMovementHandler.TYPE_CARET_LEFT, service));
         manager.setActionHandler(IdeActions.ACTION_EDITOR_MOVE_CARET_UP, new CaretMovementHandler(CaretMovementHandler.TYPE_CARET_UP, service));
         manager.setActionHandler(IdeActions.ACTION_EDITOR_MOVE_CARET_RIGHT, new CaretMovementHandler(CaretMovementHandler.TYPE_CARET_RIGHT, service));
+        manager.setActionHandler(IdeActions.ACTION_EDITOR_DELETE, new TextDeleteHandler(service));
+        manager.setActionHandler(IdeActions.ACTION_EDITOR_BACKSPACE, new TextDeleteHandler(service));
         manager.getTypedAction().setupHandler(mKeyInputListener);
     }
 }

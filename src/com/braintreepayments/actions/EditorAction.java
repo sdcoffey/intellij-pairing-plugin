@@ -43,13 +43,13 @@ public abstract class EditorAction {
         EditorAction action = null;
         switch (actionKey) {
             case 'm':
-                action = new CaretMovementAction();
-                action.deserializeInternal(data);
+                action = new CaretMovementAction(data);
                 break;
             case 'i':
-                action = new KeyInputAction();
-                action.deserializeInternal(data);
+                action = new KeyInputAction(data);
                 break;
+            case 'd':
+                action = new TextDeleteAction(data);
         }
 
         return action;

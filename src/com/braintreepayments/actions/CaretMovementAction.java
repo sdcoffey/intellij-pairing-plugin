@@ -8,12 +8,14 @@ public class CaretMovementAction extends EditorAction {
     private int mColumn;
     private int mLine;
 
+    protected CaretMovementAction(String data) {
+        deserializeInternal(data);
+    }
+
     public CaretMovementAction(int lineShift, int columnShift) {
         mColumn = columnShift;
         mLine = lineShift;
     }
-
-    protected CaretMovementAction() {}
 
     @Override
     public String serialize() {

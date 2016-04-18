@@ -7,12 +7,14 @@ public class KeyInputAction extends  EditorAction {
     private String mInput;
     private int mOffset;
 
+    protected KeyInputAction(String data) {
+        deserializeInternal(data);
+    }
+
     public KeyInputAction(int offset, String input) {
         mOffset = offset;
         mInput = input;
     }
-
-    protected KeyInputAction() {}
 
     @Override
     public String serialize() {
